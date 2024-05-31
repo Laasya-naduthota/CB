@@ -15,22 +15,36 @@ class rectangle{
 		
 	public:
 		struct point rec[4];
-		void print();
-		struct edge *ed;
-		struct edge  maxmin();
-		int perimeter(rectangle::edge e);
-		int area(rectangle::edge e);
-};
+		edge *ed;
 
+		void getdata();
+		void print();
+		struct edge*  maxmin();
+		int overlap(rectangle,int);
+		int perimeter(struct edge*);
+		int area(struct edge*);
+		//bool operator == (rectangle r2) {
+		//	if ( (rec[0].x == r2.rec[0].x ) && (rec[0].y == r2.rec[0].y) ) { return 1;}
+		//}
+};
+void rectangle::getdata(){
+	int i;
+	//rectangle r;
+	for(i=0;i<4;i++){
+		cout<<"enter the point:"<<endl;
+		cin>>this->rec[i].x>>this->rec[i].y;
+	}
+}
 void rectangle::print (){
 	int i;
+	//rectangle r;
 	cout<<"the coordinates of the rectangle are:"<<endl;
 	for(i=0;i<4;i++){
-		cout<<"x :"<<rec[i].x<<endl<<"y :"<<rec[i].y<<endl;
+		cout<<"x :"<<this->rec[i].x<<endl<<"y :"<<this->rec[i].y<<endl;
 	}
 }
 
-rectangle::edge   rectangle::maxmin(){
+rectangle::edge*   rectangle::maxmin(){
 	int i,x,y;
 	float d;
 	int m[4];
@@ -58,44 +72,100 @@ rectangle::edge   rectangle::maxmin(){
 			l=m[i];
 		}
            }
-	struct edge  e;
-	e.length=l;
-	e.breadth=b;
+	ed->length=l;
+	ed->breadth=b;
 	cout<<"length is:"<<l<<endl<<"breadth is:"<<b<<endl;
-	return e;
+	return ed;
 
 }
 
-int rectangle::perimeter(rectangle::edge e){
+int rectangle::perimeter(rectangle::edge *ed){
 	int l,b,p;
-	l=e.length;
-	b=e.breadth;
+	l=ed->length;
+	b=ed->breadth;
 	p=(2*l) +(2*b);
 	return p;
 }
 
-int rectangle::area(rectangle::edge e){
+int rectangle::area(rectangle::edge *ed){
 	int l,b,a;
-	l=e.length;
-	b=e.breadth;
+	l=ed->length;
+	b=ed->breadth;
 	a=l*b;
 	return a;
 }
 
+int rectangle::overlap(rectangle r2,int n){
+	int i,j;
+	int count=0;
+	for(i=0;i<4;i++){
+		for(j=0;j<4;j++){
+			if((this->rec[i].x==r2.rec[j].x) && (this->rec[i].y==r2.rec[j].y)){
+				count=count+1;
+			}
+		}
+	}
+	if(count==2){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
 
 int main(){
-	int i,perimeter,area;
-	rectangle r;
-	for(i=0;i<4;i++){
-		cout<<"enter the point:"<<endl;
-		cin>>r.rec[i].x>>r.rec[i].y;
+	int i,j,p,a,s,b;
+	int n=3;
+	int perimeter=0;
+	int area=0;
+	int cedge=0;
+	rectangle r1,r2,r3;
+	rectangle multiple[n] = {r1,r2,r3};
+//	multiple={r1,r2,r3};
+
+	//getting and printing data
+	
+	for(i=0;i<n;i++){
+		multiple[i].getdata();
 	}
-	r.print();
-	rectangle::edge ed = r.maxmin();
-	perimeter=r.perimeter(ed);
+	for(i=0;i<n;i++){
+		multiple[i].print();
+	}
+	//Calculating length and breadth of rectangles
+	
+	for(i=0;i<n;i++){
+		multiple[i].maxmin();
+
+	}
+
+	//Determining overlapping edges
+	//
+	for(i=0;i<n;i++){
+		for(j=i;j<3;j++){
+			s=multiple[i].overlap(multiple[j],n);
+			cedge=cedge+s;
+		}
+        }
+        cout<<"cedge is:"<<cedge<<endl;	
+	//calculating perimeter
+	//
+	for(i=0;i<n;i++){
+		p=multiple[i].perimeter(multiple[i].ed);
+		perimeter=perimeter+p;
+	}
+	b=r1.ed->breadth;
+	cout<<"breadth is:"<<b<<endl;
+	b=cedge*b;
+	cout<<"b:"<<b<<endl;
+	perimeter=perimeter-(2*b);
 	cout<<"Perimeter:"<<perimeter<<endl;
-        area=r.area(ed);
-	cout<<"area is:"<<area<<endl;
+
+        //calculating area
+	for(i=0;i<n;i++){
+		a=multiple[i].area(multiple[i].ed);
+		area=area+a;
+	}
+	cout<<"Area:"<<area<<endl;
 
 	return 0;
 }
